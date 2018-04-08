@@ -1,3 +1,7 @@
+/*
+ *poj-1009
+ *行程长度编码
+ * */
 #include <stdio.h>
 #include <algorithm>
 #include <stdlib.h>
