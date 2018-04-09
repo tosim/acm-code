@@ -30,7 +30,7 @@ The towers in case 2 can be covered in 2 frequencies.
 ### Solution
 根据塔的坐标先建立无向图，距离<=20的建边，接下来就是图的最少染色问题，即相邻的点不能染相同的颜色，问所用的最少颜色数。
 
-![](https://github.com/tosim/acm-code/blob/master/solutions/resources/sicily-1039-img1.gif)  
+![](https://github.com/tosim/acm-code/raw/master/solutions/resources/sicily-1039-img1.gif)  
 
 数据量较小，直接深搜
 
