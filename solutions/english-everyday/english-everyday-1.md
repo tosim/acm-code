@@ -8,7 +8,7 @@
 |factor|n.因数|
 |explanin|v.解释|
 |explanation|n.解释,说明|
-|synatax|n.语法，句法|
+|syntax|n.语法，句法|
 |feedback|n.反馈|
 |forum|n.论坛|
 |accord|n.协议，条约<br/>vi.一致<br/>vt.使一致|
