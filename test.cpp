@@ -3,6 +3,7 @@
 #include <math.h>
 #include <string.h>
 
+
 int n;
 int mp[13][13];
 std::pair<double,double> p[13];
