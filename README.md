@@ -25,6 +25,6 @@
 
 本项目用于记录acm做题代码和解题报告，代码保存于各个文件夹中，以题目分类命名。  
 
-解题报告位于***<font color="#006600">solutions</font>***中，记录特定题目的详细解题过程
+解题报告位于<font color="#006600">solutions</font>中，记录特定题目的详细解题过程
 
-个人日记位于***<font color="#006600">solutions/diray</font>***中，记录日常。
+个人日记位于<font color="#006600">solutions/diray</font>中，记录日常。
