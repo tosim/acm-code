@@ -1,77 +1,134 @@
 #include <stdio.h>
-#include <utility>
-#include <math.h>
 #include <string.h>
 
+char mp[105][105];
+char sg[105];
 
-int n;
-int mp[13][13];
-std::pair<double,double> p[13];
-int cnt;
-int clr[13];
-int vis[13];
+void solve(int len){
+    int col = strlen(sg) - 1;
+    int maxx[105];
+    int cnt,sum;
+    int num[105][105];
+    memset(maxx,0,sizeof(maxx));
+    int maxi[105];
+    for(int i = 0;i < len;i++){
+        cnt = 0;
+        sum = 0;
+        for(int j = 0;mp[i][j] != '\0';j++){
+            if(mp[i][j] != '&' && mp[i][j] != 10){
+                sum++;
+            }else{
+                num[i][cnt] = sum;
+                if(maxx[cnt] < sum){
+                    maxx[cnt] = sum;
+                    maxi[cnt] = i;
+                }
+                cnt++;
+                sum = 0;
+            }
+        }
+    }
+    int mark[105];
+    mark[0] = 0;
+    int s = 0;
+    for(int i = 0;i < col;i++){
+        s += maxx[i] + 3;
+        mark[i+1]= s;
+    }
+    for(int kk = 0;kk <= mark[col];kk++){
+        if(kk == 0 || kk == mark[col]) printf("@");
+        else printf("-");
+    }
+    printf("\n");
+    for(int i = 0;i < len;i++){
+        printf("| ");
 
-int check(int v,int color){
-	if(clr[v] != 0) return 0;
-	for(int i = 0;i < n;i++){
-		if(mp[v][i] == 1 && clr[i] == color){
-			return 0;
-		}
-	}
-	return 1;
+        int j = 0;
+        for(int cur = 0;cur < col;cur++){
+            if(num[i][cur] == maxx[cur]){
+                for(;mp[i][j] != '&' && mp[i][j] != 10;j++){
+                    printf("%c",mp[i][j]);
+                }
+                j++;
+                printf(" |");
+                if(cur != col - 1){
+                    printf(" ");
+                }
+                continue;
+            }
+            if(sg[cur] == '<'){
+                for(;mp[i][j] != '&' && mp[i][j] != 10;j++){
+                    printf("%c",mp[i][j]);
+                }
+                j++;
+                for(int kk = 0;kk < maxx[cur]-num[i][cur];kk++){
+                    printf(" ");
+                }
+            }else if(sg[cur] == '>'){
+                for(int kk = 0;kk < maxx[cur]-num[i][cur];kk++){
+                    printf(" ");
+                }
+                for(;mp[i][j] != '&' && mp[i][j] != 10;j++){
+                    printf("%c",mp[i][j]);
+                }
+                j++;
+            }else{
+                int le = (maxx[cur]-num[i][cur]) / 2;
+                for(int kk = 0;kk < le;kk++){
+                    printf(" ");
+                }
+                for(;mp[i][j] != '&' && mp[i][j] != 10;j++){
+                    printf("%c",mp[i][j]);
+                }
+                for(int kk = 0;kk < maxx[cur]-num[i][cur] - le;kk++){
+                    printf(" ");
+                }
+                j++;
+            }
+            printf(" |");
+            if(cur != col - 1){
+                printf(" ");
+            }
+        }
+        printf("\n");
+        if(i == 0){
+            int cc = 0;
+            for(int kk = 0;kk <= mark[col];kk++){
+                if(mark[cc] == kk){
+                    if(kk == 0 || kk == mark[col]){
+                        printf("|");
+                    }else if(i == 0){
+                        printf("+");
+                    }else{
+                        printf("|");
+                    }
+                    cc++;
+                }else{
+                    printf("-");
+                }
+            }
+            printf("\n");
+        }
+
+    }
+    for(int kk = 0;kk <= mark[col];kk++){
+        if(kk == 0 || kk == mark[col]) printf("@");
+        else printf("-");
+    }
+    printf("\n");
 }
-void dfs(int s){
-	vis[s] = 1;
-	for(int i = 0;i < n;i++){
-		if(mp[s][i] == 1 && vis[i] == 0){
-			for(int cc = 1;cc <= n;cc++){
-				if(check(i,cc)){
-					if(cc > cnt) cnt = cc;
-					clr[i] = cc;
-				}
-			}
-			dfs(i);
-		}	
-	}
-}
-int main(){	
-	int _case = 1;
-	while(scanf("%d",&n) && n){
-		double x,y;
-		for(int i = 0;i < n;i++){
-			scanf("%lf%lf",&x,&y);
-			p[i].first = x;
-			p[i].second = y;
-		}
-		memset(mp,0,sizeof(mp));
-		for(int i = 0;i < n;i++){
-			for(int j = i+1;j < n;j++){
-				double dis = (p[i].first-p[j].first) * (p[i].first-p[j].first) + (p[i].second-p[j].second) * (p[i].second-p[j].second);
-				if(dis <= 400.0){
-					mp[i][j] = mp[j][i] = 1;
-				}
-			}
-		} 
-		memset(clr,0,sizeof(clr));
-		memset(vis,0,sizeof(vis));
-		clr[0] = 1;
-		cnt = 1;
-		dfs(0);
-		printf("The towers in case %d can be covered in %d frequencies.\n",_case++,cnt);
-		/*
-		cnt = 1;		
-		for(int i = 1;i <= n;i++){
-			memset(vis,0,sizeof(vis));
-			dfs(0,i);
-			if(cnt == n){
-				printf("The towers in case %d can be covered in %d frequencies.\n",_case++,i);
-				break;
-			}
-		}
-		*/
-		//printf("cnt = %d\n",cnt);
-		//for(int i = 0;i < n;i++) printf("clr[%d] = %d\n",i,clr[i]);
-	}
-
-	return 0;
+int main(){
+    fgets(sg,105,stdin);
+    int i = 0;
+    while(fgets(mp[i],105,stdin)){
+        if(mp[i][0] == '*' || mp[i][0] == '>' || mp[i][0] == '<' || mp[i][0] == '='){
+            solve(i);
+            if(mp[i][0] == '*') break;
+            strcpy(sg,mp[i]);
+            i = 0;
+            continue;
+        }
+        i++;
+    }
+    return 0;
 }
