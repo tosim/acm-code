@@ -1,134 +1,110 @@
 #include <stdio.h>
+#include <iostream>
 #include <string.h>
 
-char mp[105][105];
-char sg[105];
+using namespace std;
 
-void solve(int len){
-    int col = strlen(sg) - 1;
-    int maxx[105];
-    int cnt,sum;
-    int num[105][105];
-    memset(maxx,0,sizeof(maxx));
-    int maxi[105];
-    for(int i = 0;i < len;i++){
-        cnt = 0;
-        sum = 0;
-        for(int j = 0;mp[i][j] != '\0';j++){
-            if(mp[i][j] != '&' && mp[i][j] != 10){
-                sum++;
-            }else{
-                num[i][cnt] = sum;
-                if(maxx[cnt] < sum){
-                    maxx[cnt] = sum;
-                    maxi[cnt] = i;
-                }
-                cnt++;
-                sum = 0;
-            }
-        }
-    }
-    int mark[105];
-    mark[0] = 0;
-    int s = 0;
-    for(int i = 0;i < col;i++){
-        s += maxx[i] + 3;
-        mark[i+1]= s;
-    }
-    for(int kk = 0;kk <= mark[col];kk++){
-        if(kk == 0 || kk == mark[col]) printf("@");
-        else printf("-");
-    }
-    printf("\n");
-    for(int i = 0;i < len;i++){
-        printf("| ");
-
-        int j = 0;
-        for(int cur = 0;cur < col;cur++){
-            if(num[i][cur] == maxx[cur]){
-                for(;mp[i][j] != '&' && mp[i][j] != 10;j++){
-                    printf("%c",mp[i][j]);
-                }
-                j++;
-                printf(" |");
-                if(cur != col - 1){
-                    printf(" ");
-                }
-                continue;
-            }
-            if(sg[cur] == '<'){
-                for(;mp[i][j] != '&' && mp[i][j] != 10;j++){
-                    printf("%c",mp[i][j]);
-                }
-                j++;
-                for(int kk = 0;kk < maxx[cur]-num[i][cur];kk++){
-                    printf(" ");
-                }
-            }else if(sg[cur] == '>'){
-                for(int kk = 0;kk < maxx[cur]-num[i][cur];kk++){
-                    printf(" ");
-                }
-                for(;mp[i][j] != '&' && mp[i][j] != 10;j++){
-                    printf("%c",mp[i][j]);
-                }
-                j++;
-            }else{
-                int le = (maxx[cur]-num[i][cur]) / 2;
-                for(int kk = 0;kk < le;kk++){
-                    printf(" ");
-                }
-                for(;mp[i][j] != '&' && mp[i][j] != 10;j++){
-                    printf("%c",mp[i][j]);
-                }
-                for(int kk = 0;kk < maxx[cur]-num[i][cur] - le;kk++){
-                    printf(" ");
-                }
-                j++;
-            }
-            printf(" |");
-            if(cur != col - 1){
-                printf(" ");
-            }
-        }
-        printf("\n");
-        if(i == 0){
-            int cc = 0;
-            for(int kk = 0;kk <= mark[col];kk++){
-                if(mark[cc] == kk){
-                    if(kk == 0 || kk == mark[col]){
-                        printf("|");
-                    }else if(i == 0){
-                        printf("+");
-                    }else{
-                        printf("|");
-                    }
-                    cc++;
-                }else{
-                    printf("-");
-                }
-            }
-            printf("\n");
-        }
-
-    }
-    for(int kk = 0;kk <= mark[col];kk++){
-        if(kk == 0 || kk == mark[col]) printf("@");
-        else printf("-");
-    }
-    printf("\n");
-}
+//#define t   \"
+string love[] = {
+"\"\"\"\"\"        \"\"     \"\"   ",
+"  \"        \"    \" \" \" ",
+"  \"       \"     \"     \"",
+"  \"       \"           \"",
+"  \"        \"         \"",
+"  \"         \"       \"",
+"  \"           \"   \" ",
+"  \"            \"\" ",
+"\"\"\"\"\"          \"",
+"end"
+};
 int main(){
-    fgets(sg,105,stdin);
-    int i = 0;
-    while(fgets(mp[i],105,stdin)){
-        if(mp[i][0] == '*' || mp[i][0] == '>' || mp[i][0] == '<' || mp[i][0] == '='){
-            solve(i);
-            if(mp[i][0] == '*') break;
-            strcpy(sg,mp[i]);
-            i = 0;
-            continue;
-        }
-        i++;
+
+    string tmp;
+    cout<<"请输入你的名字"<<endl;
+    getline(cin,tmp);
+
+    cout<<"请输入你的性别"<<endl;
+    getline(cin,tmp);
+
+    cout<<"请输入你的专业"<<endl;
+    getline(cin,tmp);
+
+    cout<<"请输入你的年级"<<endl;
+    getline(cin,tmp);
+
+    cout<<"请输入你的年龄"<<endl;
+    getline(cin,tmp);
+
+    cout<<"冯海婧"<<endl;
+    getline(cin,tmp);
+
+    cout<<"谢谢你，让我遇到你"<<endl;
+    getline(cin,tmp);
+
+    cout<<"从第一次看到你"<<endl;
+    getline(cin,tmp);
+
+    cout<<"你的样子就在我心里"<<endl;
+    getline(cin,tmp);
+
+    cout<<"以前的我不懂得喜欢和爱"<<endl;
+    getline(cin,tmp);
+
+    cout<<"在爱情的世界里，我曾经一无所有"<<endl;
+    getline(cin,tmp);
+
+    cout<<"是你在我情感的小站里，做我的第一位来客"<<endl;
+    getline(cin,tmp);
+
+    cout<<"我想经过了几个站的你，一定累了"<<endl;
+    getline(cin,tmp);
+
+    cout<<"所以，请在我这多停留一会"<<endl;
+    getline(cin,tmp);
+
+    cout<<"当你一个人的时候，其实我一直站在你身后"<<endl;
+    getline(cin,tmp);
+
+    cout<<"如果有一天，你需要倾诉，怀抱，需要有人为你擦去泪水"<<endl;
+    getline(cin,tmp);
+
+    cout<<"你只要回过头，你就会看到我在你的身后"<<endl;
+    getline(cin,tmp);
+
+    cout<<"你曾经问我真的有一见钟情吗"<<endl;
+    getline(cin,tmp);
+
+    cout<<"虽然我也不确定之前的感受"<<endl;
+    getline(cin,tmp);
+
+    cout<<"我只知道现在我很爱你"<<endl;
+    getline(cin,tmp);
+
+    cout<<"有多爱？"<<endl;
+    getline(cin,tmp);
+
+
+    int i,j;
+
+    printf("     ******       ******\n"
+                "   **********   **********\n"
+                  " ************* *************\n");
+    for(i=0;i<3;i++){
+        for(j=0;j<29;j++)
+            printf("*");
+        printf("\n");
     }
+    for(i=0;i<7;i++){
+        for(j=0;j<2*(i+1)-1;j++)
+            printf(" ");
+        for(j=0;j<27-i*4;j++)
+            printf("*");
+        printf("\n");
+    }
+
+    for(i=0;i<14;i++)//最后一个星号*与上面的规律脱节了  所以独立显示
+        printf(" ");
+    printf("*\n");
+
     return 0;
 }
