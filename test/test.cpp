@@ -1,83 +1,133 @@
-#include<stdio.h>
-#include<unistd.h>
-#include<stdlib.h>
-#include<semaphore.h>
-#include<pthread.h>
+#include <stdio.h>
+#include <string.h>
+#include <algorithm>
+#include <map>
+using namespace std;
 
-#define _SIZE_ 5
+const int maxn = 5e5 + 1;
+const long long MOD = 1e9;
 
-int ringbuf[_SIZE_];
+long long sum[maxn][31];
+int a[maxn];
+map<long long,int> px;
 
-pthread_mutex_t lock1 = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t lock2 = PTHREAD_MUTEX_INITIALIZER;
+int n,m;
+void init(){
+    //memset(sum,0,sizeof(sum));//不需要初始化，而且写了就超时
+    px.clear();
+}
 
-sem_t blanks;
-sem_t datas;
-
-int i1 = 0;
-int i2 = 0;
-void* thread_pro(void* arg)
-{
-    while(1)
-    {
-        sleep(1);
-        sem_wait(&blanks);//判断是否可以生产
-        pthread_mutex_lock(&lock1);//因为有多个生产者，抢占生产锁
-        //int data = rand()%10000;
-        int data = i1;
-        ringbuf[i1] = data;
-        i1++;
-        i1 %=_SIZE_;
-        printf("pro sell a number: %d\n",data);
-
-        pthread_mutex_unlock(&lock1);//生产完成，是否生产锁
-        sem_post(&datas);//提示消费者消费
+int find_left(long long x){
+    int l = 0,r = n - 1;
+    while(l < r){
+        int m = (l + r) >> 1;
+        if(a[m] > x){
+            r = m;
+        }else if(a[m] < x){
+            l = m + 1;
+        }else{
+            l = m + 1;
+        }
+    }
+    if(a[l] > x){
+        return l;
+    }else{
+        return -1;
     }
 }
 
-
-
-void* thread_con(void* arg)
-{
-    while(1)
-    {
-        sleep(1);
-        sem_wait(&datas);//判断是否可以消费
-        pthread_mutex_lock(&lock2);//因为有多个消费者，抢占消费锁
-        int data = ringbuf[i2];
-        i2++;
-        i2%=_SIZE_;
-        printf("con get a number: %d\n",data);
-
-        pthread_mutex_unlock(&lock2);
-        sem_post(&blanks);//消费完成，提醒生产者生产
-
+int find_right(long long x){
+    int l = 0,r = n - 1;
+    while(l + 1 < r){
+        int m = (l + r) >> 1;
+        if(a[m] > x){
+            r = m - 1;
+        }else if(a[m] < x){
+            l = m;
+        }else{
+            l = m;
+        }
+    }
+    if(a[r] <= x){
+        return r;
+    }else if(a[l] <= x){
+        return l;
+    }else{
+        return -1;
     }
 }
 
-int main()
-{
-    //index = 0;
-    //num = 0;
-    sem_init(&blanks,0,_SIZE_);
-    sem_init(&datas,0,0);
+void test_find(){
+    n = 5;
+    a[0] = 2;
+    a[1] = 5;
+    a[2] = 10;
+    a[3] = 15;
+    a[4] = 16;
+    printf("l = %d , r = %d\n\n",find_left(16),find_right(18));
+}
+int main(){
+    //test_find();
+    int T;
+    scanf("%d",&T);
+    while(T--){
+        init();
+        scanf("%d%d",&n,&m);
+        for(int i = 0;i < n;i++){
+            scanf("%d",&a[i]);
+        }
+        sort(a,a+n);
+        for(int i = 0;i < n;i++){
+            for(int k = 1;k <= 30;k++){
+                if(i == 0){
+                    sum[i][k] = a[i]/k;
+                }else{
+                    sum[i][k] = sum[i-1][k] + a[i] / k;
+                }
+            }
+        }
+        //print_sumik();
+        int p;
+        long long ans = 0;
+        for(int i = 1;i <= m;i++){
+            scanf("%d",&p);
+            //printf("cal p = %d\n",p);
+            if(px.find(p) != px.end()){
+                //printf("p = %d has been caled\n",p);
+                ans = (ans + (long long)i*px[p]%MOD)%MOD;
+                continue;
+            }
+            long long pk = p;
+            long long eans = 0;
+            //long long pre = pk;//这里特别注意，因为pk乘上去会超longlong，必须用pre记录pk的前一个合法值
+            //因为当p^k-1大于1e9的时候，也就是条件不成立的时候,p^k可能大于1e18
+            for(int k = 1;/*pre < a[n-1]*/;k++/*,pre = pk*/,pk *= p){
+                long long lx = pk / p;
+                long long rx = pk;
 
-    pthread_t pro1,pro2;
-    pthread_t con1,con2;
-    pthread_create(&pro1,NULL,thread_pro,NULL);
-    pthread_create(&pro2,NULL,thread_pro,NULL);
-    pthread_create(&con1,NULL,thread_con,NULL);
-    pthread_create(&con2,NULL,thread_con,NULL);
-    pthread_join(pro1,NULL);
-    pthread_join(pro2,NULL);
-    pthread_join(con1,NULL);
-    pthread_join(con2,NULL);
-
-    sem_destroy(&blanks);
-    sem_destroy(&datas);
-
-    pthread_mutex_destroy(&lock1);
-    pthread_mutex_destroy(&lock2);
-    //printf("hello\n");
+                int l = find_left(lx);
+                if(l == -1){
+                    continue;
+                }
+                int r = find_right(rx);
+                if(r == -1){
+                    continue;
+                }
+                if(l > r){
+                    continue;
+                }
+                long long tmp;
+                if(l == 0) tmp = sum[r][k];
+                else tmp = sum[r][k] - sum[l-1][k];
+                eans = (eans + tmp%MOD)%MOD;
+                //printf("p = %d,k = %d,search (%lld,%lld]\n",p,k,lx,rx);
+                //printf("l = %d,r = %d,add %lld\n\n",l,r,tmp);
+                if(pk >= a[n-1]) break;
+            }
+            px[p] = eans;
+            ans = (ans + (long long)i*eans%MOD)%MOD;
+        }
+        printf("%lld\n",ans);
+    }
     return 0;
 }
