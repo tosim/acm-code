@@ -1,0 +1,197 @@
+# [zoj-4029](http://acm.zju.edu.cn/onlinejudge/showProblem.do?problemCode=4029)
+
+### Description
+给定包含n个元素的a数组,a1,a2,...,an,希望知道
+$\sum\limits_{1 \le i \le n}\Bigl\lfloor \frac{a_i}{\lceil\log_{p}a_i\rceil}\Bigr\rfloor$
+对于每个给定的p
+### input
+多组输入，第一行表示测试数据T组
+对于每组测试数据，第一行为两个整数n,m（$1 \le n, m \le 5 \times 10^5$）
+第二行为a数组,a1,a2,...,an,($2 \le a_i \le 10^{9}$)
+第三行为p数组,p1,p2,...,pm,($2 \le a_i \le 10^{9}$)
+
+### output
+对于每组输入，输出一个整数$(\sum\limits_{i=1}^{m} i \cdot z_i) \bmod 10^9$
+zi是对于每个pi的答案
+
+
+### Sample Input
+```
+2
+3 2
+100 1000 10000
+100 10
+4 5
+2323 223 12312 3
+1232 324 2 3 5
+```
+
+### Sample Output
+```
+11366
+45619
+```
+
+### Solution
+分析暴力方法，对于每个p，去暴力求和，复杂度为O(m*n)，不可取
+那么有没有办法能够使我们求和的速度加快呢，观察表达式，发现对于一个给定的p，分母取上界，可知对于一个已知的分母k和一个p，可以得到一个ai的取值范围区间:  (p^k-1,p^k],对于一个已知的值区间，我们可以先对ai数组排序，再二分求下标区间，数组的区间求和我们可以用前缀和去线性求得，但是这里我们还有一个分母要除，因为p和ai的取值，可用得到k的最大值为30,所以我们可以维护30个前缀和数组。
+因此，我们可以考虑枚举p^k，对于每个p^k，去二分得到ai的左右区间，并用前缀和计算和，计算复杂度： O(m*30*logn)
+
+
+### Code
+```
+#include <stdio.h>
+#include <string.h>
+#include <algorithm>
+#include <map>
+using namespace std;
+
+const int maxn = 5e5 + 1;
+const long long MOD = 1e9;
+
+long long sum[maxn][31];
+int a[maxn];
+map<long long,int> px;
+
+int n,m;
+void init(){
+    //memset(sum,0,sizeof(sum));//不需要初始化，而且写了就超时
+    px.clear();
+}
+
+int find_left(long long x){
+    int l = 0,r = n - 1;
+    while(l < r){
+        int m = (l + r) >> 1;
+        if(a[m] > x){
+            r = m;
+        }else if(a[m] < x){
+            l = m + 1;
+        }else{
+            l = m + 1;
+        }
+    }
+    if(a[l] > x){
+        return l;
+    }else{
+        return -1;
+    }
+}
+
+int find_right(long long x){
+    int l = 0,r = n - 1;
+    while(l + 1 < r){
+        int m = (l + r) >> 1;
+        if(a[m] > x){
+            r = m - 1;
+        }else if(a[m] < x){
+            l = m;
+        }else{
+            l = m;
+        }
+    }
+    if(a[r] <= x){
+        return r;
+    }else if(a[l] <= x){
+        return l;
+    }else{
+        return -1;
+    }
+}
+
+int main(){
+    //test_find();
+    int T;
+    scanf("%d",&T);
+    while(T--){
+        init();
+        scanf("%d%d",&n,&m);
+        for(int i = 0;i < n;i++){
+            scanf("%d",&a[i]);
+        }
+        sort(a,a+n);
+        for(int i = 0;i < n;i++){
+            for(int k = 1;k <= 30;k++){
+                if(i == 0){
+                    sum[i][k] = a[i]/k;
+                }else{
+                    sum[i][k] = sum[i-1][k] + a[i] / k;
+                }
+            }
+        }
+        //print_sumik();
+        int p;
+        long long ans = 0;
+        for(int i = 1;i <= m;i++){
+            scanf("%d",&p);
+            //printf("cal p = %d\n",p);
+            if(px.find(p) != px.end()){
+                //printf("p = %d has been caled\n",p);
+                ans = (ans + (long long)i*px[p]%MOD)%MOD;
+                continue;
+            }
+            long long pk = p;
+            long long eans = 0;
+            //long long pre = pk;//这里特别注意，因为pk乘上去会超longlong，必须用pre记录pk的前一个合法值
+            //因为当p^k-1大于1e9的时候，也就是条件不成立的时候,p^k可能大于1e18
+            for(int k = 1;/*pre < a[n-1]*/;k++/*,pre = pk*/,pk *= p){
+                long long lx = pk / p;
+                long long rx = pk;
+
+                int l = find_left(lx);
+                if(l == -1){
+                    continue;
+                }
+                int r = find_right(rx);
+                if(r == -1){
+                    continue;
+                }
+                if(l > r){
+                    continue;
+                }
+                long long tmp;
+                if(l == 0) tmp = sum[r][k];
+                else tmp = sum[r][k] - sum[l-1][k];
+                eans = (eans + tmp%MOD)%MOD;
+                //printf("p = %d,k = %d,search (%lld,%lld]\n",p,k,lx,rx);
+                //printf("l = %d,r = %d,add %lld\n\n",l,r,tmp);
+                if(pk >= a[n-1]) break;
+            }
+            px[p] = eans;
+            ans = (ans + (long long)i*eans%MOD)%MOD;
+        }
+        printf("%lld\n",ans);
+    }
+    return 0;
+}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
