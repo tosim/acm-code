@@ -1,14 +1,10 @@
 #include <stdio.h>
-#include <algorithm>
 
-using namespace std;
-int a[] = {1,4,8,16,18};
-
-void test(){
-    printf("%ld\n",lower_bound(a,a+5,1) - a);
-    printf("%ld\n",upper_bound(a,a+5,17) - a - 1);
-}
 int main(){
-    test();
+    long long ans = 1;
+    for(int i = 2;i <= 30;i++){
+        ans *= i;
+    }
+    printf("%lld\n",ans);
     return 0;
 }
