@@ -11,5 +11,6 @@ int main(){
         if(i != 0) printf(" ");
         printf("%d",rand()%90+10);
     }
+    printf("\n");
 }
 
