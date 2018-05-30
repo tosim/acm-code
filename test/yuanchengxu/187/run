@@ -1,0 +1,3 @@
+#!/bin/bash
+g++ solution.cpp -o solution.out
+./solution.out
