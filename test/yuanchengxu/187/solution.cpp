@@ -1,38 +1,42 @@
 #include <stdio.h>
 
-const int maxn = 100000 + 5;
+int month[13] = {0,31,28,31,30,31,30,31,31,30,31,30,31};
+int year[2] = {365,366};
+char week[7][10] = {
+    "Sunday", "Monday","Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
+};
 
-int a[maxn];
+int typeOfYear(int y){
+    if(y % 4 == 0 && y % 100 != 0 || y % 400 == 0){
+        return 1;
+    }
+    return 0;
+}
 
 int main(){
     int n;
     while(scanf("%d",&n) != EOF){
-        for(int i = 0;i < n;i++){
-            scanf("%d",&a[i]);
-        }
-        int s,e,x;
-        int sum = 0;
-        int maxx = -0x7fffffff;
-        for(int i = 0;i < n;i++){
-            if(sum < 0){
-                x = i;
-                sum = a[i];
+        int day = n % 7;
+        int y,m;
+        for(y = 2000;;y++){
+            int type = typeOfYear(y);
+            if(n > year[type]){
+                n -= year[type];
             }else{
-                sum += a[i];
-            }
-            if(sum > maxx){
-                maxx = sum;
-                s = x;
-                e = i;
+                break;
             }
         }
-        printf("%d\n",maxx);
-        printf("%d %d\n",s+1,e+1);
-        for(int i = s;i <= e;i++){
-            if(i != s) printf(" ");
-            printf("%d",a[i]);
+        int type = typeOfYear(y);
+        for(m = 1;;m++){
+            int sub = month[m];
+            if(m == 2 && type == 1) sub++;
+            if(n >= sub){
+                n -= sub;
+            }else{
+                break;
+            }
         }
-        printf("\n");
+        printf("%4d-%02d-%02d %s\n",y,m,n+1,week[(day+6)%7]);
     }
     return 0;
 }

@@ -2,17 +2,18 @@
 #include <string.h>
 #include <time.h>
 #include <stdlib.h>
-
 //获取[0,up)的随机数
-int getRandInt(int up){
+long long getRandInt(long long up){
     return rand()%up;
 }
-int maxn = 255;
+
+int maxn = 999;
 int main(){
     srand((unsigned)time(NULL));
-    int n = rand()%100000;
-    for(int i = 0;i < n;i++){
-        printf("%c",getRandInt(26) + 'a');
+    int n = (int)getRandInt(maxn) + 1;
+    printf("1");
+    for(int i = 0;i < n - 1;i++){
+        printf("%c",'0'+(int)getRandInt(10));
     }
     printf("\n");
 }

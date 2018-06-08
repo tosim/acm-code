@@ -1,38 +1,78 @@
 #include <stdio.h>
+#include <list>
 
-const int maxn = 100000 + 5;
+void test(){
+    std::list<int> listM;
+    listM.push_back(2);
+    listM.push_back(2);
+    listM.push_back(2);
+    listM.push_back(4);
+    listM.push_back(5);
+    listM.push_back(6);
 
-int a[maxn];
-
+    std::list<int>::iterator it;
+    for(it=listM.end(),it--;it!=listM.begin();){
+        if(*it == 2){
+            listM.erase(it--);
+        }else{
+            it--;
+        }
+    }
+    if(*it == 2){
+        listM.erase(it);
+    }
+    for(it=listM.begin();it!=listM.end();it++){
+        printf("%d ",*it);
+    }
+    printf("\n");
+}
 int main(){
     int n;
+    //test();
     while(scanf("%d",&n) != EOF){
-        for(int i = 0;i < n;i++){
-            scanf("%d",&a[i]);
+        std::list<int> listM;
+        for(int i = 1;i <= n;i++){
+            listM.push_back(i);
         }
-        int s,e,x;
-        int sum = 0;
-        int maxx = -0x7fffffff;
-        for(int i = 0;i < n;i++){
-            if(sum < 0){
-                x = i;
-                sum = a[i];
+        int dir = 1;
+        while(listM.size() != 2){
+            if(dir == 1){
+                std::list<int>::iterator it;
+                int c;
+                for(it=listM.begin(),c=1;it!=listM.end();c++){
+                    if(c==3){
+                        //printf("erase %d\n",*it);
+                        it = listM.erase(it);
+                        c = 0;
+                    }else{
+                        it++;
+                    }
+                }
             }else{
-                sum += a[i];
+                std::list<int>::iterator it;
+                int c;
+                for(it=listM.end(),it--,c=1;it!=listM.begin();c++){
+                    if(c==3){
+                        //printf("erase %d\n",*it);
+                        listM.erase(it--);
+                        c = 0;
+                    }else{
+                        it--;
+                    }
+                }
+                if(c==3){
+                    //printf("erase %d\n",*it);
+                    listM.erase(it);
+                    c = 0;
+                }
             }
-            if(sum > maxx){
-                maxx = sum;
-                s = x;
-                e = i;
-            }
+            dir ^= 1;
         }
-        printf("%d\n",maxx);
-        printf("%d %d\n",s+1,e+1);
-        for(int i = s;i <= e;i++){
-            if(i != s) printf(" ");
-            printf("%d",a[i]);
+        if(dir == 1){
+            printf("%d\n",listM.front());
+        }else{
+            printf("%d\n",listM.back());
         }
-        printf("\n");
     }
     return 0;
 }

@@ -7,13 +7,17 @@
 int getRandInt(int up){
     return rand()%up;
 }
-int maxn = 255;
+
+char name[25] = "test";
+
+int maxn = 15;
 int main(){
     srand((unsigned)time(NULL));
-    int n = rand()%100000;
+    int n = (int)getRandInt(100) + 1;
+    printf("%d\n",n);
     for(int i = 0;i < n;i++){
-        printf("%c",getRandInt(26) + 'a');
+        printf("%d ",getRandInt(101));
+        printf("%s_%d\n",name,i);
     }
-    printf("\n");
 }
 

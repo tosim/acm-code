@@ -7,15 +7,10 @@
 int getRandInt(int up){
     return rand()%up;
 }
-int maxn = 10;
+int maxn = 200000;
 int main(){
     srand((unsigned)time(NULL));
     int n = rand()%maxn;
     printf("%d\n",n);
-    for(int i = 0;i < n;i++){
-        if(i != 0) printf(" ");
-        printf("%d",getRandInt(200) - 100);
-    }
-    printf("\n");
 }
 

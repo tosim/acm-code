@@ -1,38 +1,44 @@
 #include <stdio.h>
+#include <string.h>
 
-const int maxn = 100000 + 5;
+struct Node{
+    int pos;
+    int cnt;
+};
 
-int a[maxn];
+Node a[26];
 
 int main(){
-    int n;
-    while(scanf("%d",&n) != EOF){
-        for(int i = 0;i < n;i++){
-            scanf("%d",&a[i]);
+    char x;
+    int maxx = 0,pos;
+    int cnt[26];
+    memset(cnt,0,sizeof(cnt));
+    int k = 0;
+    while(x = getchar()){
+        if(x == '\n' || x == EOF){
+            break;
         }
-        int s,e,x;
-        int sum = 0;
-        int maxx = -0x7fffffff;
-        for(int i = 0;i < n;i++){
-            if(sum < 0){
-                x = i;
-                sum = a[i];
-            }else{
-                sum += a[i];
+        int idx = x - 'a';
+        a[idx].cnt++;
+        if(a[idx].cnt == 1){
+            a[idx].pos = k;
+        }
+        k++;
+    }
+    int minn = -1;
+    char minnchar;
+    for(int i = 0;i < 26;i++){
+        if(a[i].cnt == 1){
+            if(minn == -1 || a[i].pos < minn){
+                minn = a[i].pos;
+                minnchar = 'a' + i;
             }
-            if(sum > maxx){
-                maxx = sum;
-                s = x;
-                e = i;
-            }
         }
-        printf("%d\n",maxx);
-        printf("%d %d\n",s+1,e+1);
-        for(int i = s;i <= e;i++){
-            if(i != s) printf(" ");
-            printf("%d",a[i]);
-        }
-        printf("\n");
+    }
+    if(minn == -1){
+        printf("no\n");
+    }else{
+        printf("%c\n",minnchar);
     }
     return 0;
 }
