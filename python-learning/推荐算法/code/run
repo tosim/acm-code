@@ -1,0 +1,3 @@
+rm itemCF.out
+g++ itemCF.cpp -o itemCF.out
+./itemCF.out < ../data/u1.base
